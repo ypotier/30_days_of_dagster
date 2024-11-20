@@ -1,5 +1,7 @@
 # Day 1 Solution 
 
+https://youtu.be/RP6B1wXug_0 
+
 First install the necessary packages:
 
 ```bash
