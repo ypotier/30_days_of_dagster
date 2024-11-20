@@ -8,4 +8,4 @@ Happy Holidays,
 
 Dagster Team
 
-![holidaydagster](https://github.com/user-attachments/assets/5084bdd1-1c8c-4882-93ab-6606f812e8cb)
+
