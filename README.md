@@ -1,4 +1,5 @@
-# 30 Days of Orchestration
+
+![image (8)](https://github.com/user-attachments/assets/a6aac950-74b2-4632-9962-bde2f1150c1a)
 
 https://www.youtube.com/watch?v=A3VUD1dRfvA
 
@@ -10,5 +11,6 @@ Happy Holidays,
 
 Dagster Team
 
-![image](https://github.com/user-attachments/assets/9eef2fe7-8d05-4265-ab37-8484dea79af4)
-
+<div align="center">
+  <img alt="daggy-reindeer" src="https://github.com/user-attachments/assets/9eef2fe7-8d05-4265-ab37-8484dea79af4" width="auto" height="120px">
+</div>
