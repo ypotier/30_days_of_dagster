@@ -1,85 +1,39 @@
-# Instead of running asset A every minute, figure out a way to make asset A only run when there is a 
-# change to your CSV file.
-
-#prompt  Update the code from asset A to read CSV from disk. 
+# prompt: Update the code from yesterday to include meaningful definition time and runtime metadata about asset A. 
+# Also log something useful to the event log.
 import dagster as dg
-import random
 import pandas as pd
+from dagster_pandas.data_frame import create_table_schema_metadata_from_dataframe
 import os
-
-csv_external_asset = dg.AssetSpec(
-    key = "csv_external_asset",
-    description="A CSV file that is external to Dagster",
-    metadata={"file_path": dg.MetadataValue.path("data/orders.csv"),
-            },
-    owners=["team:Ops", "christian@dagsterlabs.com"],
-    kinds=["file","csv"],
-)
-
-
-@dg.sensor(minimum_interval_seconds=30)
-def csv_external_asset_sensor(
-    context: dg.SensorEvaluationContext,
-) -> dg.SensorResult:
-    # Poll the external system every 30 seconds
-    # for the last time the file was modified
-    file_last_modified_at_ms = os.path.getmtime("data/orders.csv") * 1000
-
-    # Use the cursor to store the last time the sensor updated the asset
-    if context.cursor is not None:
-        external_asset_last_updated_at_ms = float(context.cursor)
-    else:
-        external_asset_last_updated_at_ms = 0
-
-    if file_last_modified_at_ms > external_asset_last_updated_at_ms:
-        # The external asset has been modified since it was last updated,
-        # so record a materialization and update the cursor.
-        return dg.SensorResult(
-            asset_events=[
-                dg.AssetMaterialization(
-                    asset_key=csv_external_asset.key,
-                    # You can optionally attach metadata
-                    metadata={"file_last_modified_at_ms": file_last_modified_at_ms},
-                )
-            ],
-            cursor=str(file_last_modified_at_ms),
-        )
-    else:
-        # Nothing has happened since the last check
-        return dg.SensorResult()
 
 
 @dg.asset(
-        automation_condition=dg.AutomationCondition.eager(),
+        automation_condition=dg.AutomationCondition.on_cron("* * * * *"),
         retry_policy=dg.RetryPolicy(max_retries=2),
-        deps=[csv_external_asset]
+        # add definition metadata
+        description="Data about orders for a fictional company",
+        owners=["christian@dagsterlabs.com"],
+        tags={"category": "ingestion", "priority": "high"},
+        kinds=["file","csv"],
 )
-def asset_one(context: dg.AssetExecutionContext) -> None:
-    random_choice = random.random()
-    context.log.info(f"Random choice: {random_choice}")
-    if random_choice < 0.5:
-        raise dg.Failure(
-            description=f"Asset one failed because the choice was {random_choice}",
-            metadata={
-                "filepath": dg.MetadataValue.path("some_path/to_file"),
-                "dashboard_url": dg.MetadataValue.url("http://mycoolsite.com/failures"),
-            },
-        )
+def orders(context: dg.AssetExecutionContext) -> None:
     parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     data_dir = os.path.join(parent_dir, 'data')
     df = pd.read_csv(os.path.join(data_dir, 'orders.csv'))
+
     # add metadata to the structrued event log
     context.log.info(f"Creating asset one with data: {df.head()}")
     return dg.MaterializeResult(
+        # add runtime metadata
         metadata={
             "dagster/row_count": dg.MetadataValue.int(len(df)), 
             "preview": dg.MetadataValue.md(df.head().to_markdown()),
             "filepath": dg.MetadataValue.path(os.path.join(data_dir, 'orders.csv')),
+            "dagster/column_schema": create_table_schema_metadata_from_dataframe(df)
         }
     )
 
 @dg.asset(
-        deps=["asset_one"],
+        deps=["orders"],
         automation_condition=dg.AutomationCondition.any_downstream_conditions()
 )
 def asset_two(context: dg.AssetExecutionContext) -> None:
@@ -93,6 +47,5 @@ def asset_three(context: dg.AssetExecutionContext) -> None:
     context.log.info("Creating asset three")
 
 defs = dg.Definitions(
-    assets= [asset_one, asset_two, asset_three, csv_external_asset],
-    sensors=[csv_external_asset_sensor],
+    assets= [orders, asset_two, asset_three],
 )
