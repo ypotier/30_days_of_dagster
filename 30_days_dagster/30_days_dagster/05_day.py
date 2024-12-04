@@ -2,6 +2,7 @@
 import dagster as dg
 import random
 import pandas as pd
+from dagster_pandas.data_frame import create_table_schema_metadata_from_dataframe
 import os
 
 
@@ -30,6 +31,7 @@ def asset_one(context: dg.AssetExecutionContext) -> None:
             "dagster/row_count": dg.MetadataValue.int(len(df)), 
             "preview": dg.MetadataValue.md(df.head().to_markdown()),
             "filepath": dg.MetadataValue.path(os.path.join(data_dir, 'orders.csv')),
+            "dagster/column_schema": create_table_schema_metadata_from_dataframe(df)
         }
     )
 
