@@ -1,3 +1,3 @@
 # Day 12 
 
-Create a pipeline with 3 assets, asset A, asset B, and asset C. Asset A should return a number greater than 10 70% of the time. The other 30% of the time, it should return a number less than 10. If A is great than 10, asset B should execute. If A is less than 10, asset C should execute.
+So far our assets have used code for manipulating data directly inside the asset body. What if, instead, we already have python files that manipulate data. Update the asset code in asset A to invoke a separate Python file for loading the csv.

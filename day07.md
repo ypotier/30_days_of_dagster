@@ -1,3 +1,3 @@
 # Day 7 
 
-Update asset A so that the filepath it is responsible for loading can be passed as configuration. 
+Implement an asset downstream of your first asset. Explore ways of passing data between assets.

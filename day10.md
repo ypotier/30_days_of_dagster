@@ -1,3 +1,3 @@
-# Day 10 
+# Day 10
 
-Modify the pipeline from yesterday, assuming the code for loading and summarizing the dataset must remain in a separate file called `data_scientists_want_this_in_prod.py`.
+The code for reading and writing files to disk is pretty repetitive. Encapsulate this code in a resource.
