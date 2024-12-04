@@ -7,7 +7,14 @@ import random
 import pandas as pd
 import os
 
-csv_external_asset = dg.AssetSpec("csv_external_asset")
+csv_external_asset = dg.AssetSpec(
+    key = "csv_external_asset",
+    description="A CSV file that is external to Dagster",
+    metadata={"file_path": dg.MetadataValue.path("data/orders.csv"),
+            },
+    owners=["team:Ops", "christian@dagsterlabs.com"],
+    kinds=["file","csv"],
+)
 
 
 @dg.sensor(minimum_interval_seconds=30)
@@ -86,6 +93,6 @@ def asset_three(context: dg.AssetExecutionContext) -> None:
     context.log.info("Creating asset three")
 
 defs = dg.Definitions(
-    assets= [asset_one, asset_two, asset_three],
+    assets= [asset_one, asset_two, asset_three, csv_external_asset],
     sensors=[csv_external_asset_sensor],
 )
