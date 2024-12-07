@@ -1,0 +1,6 @@
+[32m2024-12-06 21:10:29 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 466bdffa-c781-4fb6-8e68-999c0ddbe1b2 - 64492 - LOGS_CAPTURED - Started capturing logs in process (pid: 64492).
+[32m2024-12-06 21:10:29 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 466bdffa-c781-4fb6-8e68-999c0ddbe1b2 - 64492 - asset_three - STEP_START - Started execution of step "asset_three".
+[32m2024-12-06 21:10:29 -0500[0m - dagster - [34mINFO[0m - __ASSET_JOB - 466bdffa-c781-4fb6-8e68-999c0ddbe1b2 - asset_three - Creating asset three
+[32m2024-12-06 21:10:29 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 466bdffa-c781-4fb6-8e68-999c0ddbe1b2 - 64492 - asset_three - STEP_OUTPUT - Yielded output "result" of type "Nothing". (Type check passed).
+[32m2024-12-06 21:10:29 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 466bdffa-c781-4fb6-8e68-999c0ddbe1b2 - 64492 - asset_three - ASSET_MATERIALIZATION - Materialized value asset_three.
+[32m2024-12-06 21:10:29 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 466bdffa-c781-4fb6-8e68-999c0ddbe1b2 - 64492 - asset_three - STEP_SUCCESS - Finished execution of step "asset_three" in 32ms.
