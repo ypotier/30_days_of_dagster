@@ -1,0 +1,11 @@
+[32m2024-12-09 20:10:25 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 13513c94-cecb-4209-be59-502546aaf264 - 22816 - LOGS_CAPTURED - Started capturing logs in process (pid: 22816).
+[32m2024-12-09 20:10:25 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 13513c94-cecb-4209-be59-502546aaf264 - 22816 - orders - STEP_START - Started execution of step "orders".
+[32m2024-12-09 20:10:25 -0500[0m - dagster - [34mINFO[0m - __ASSET_JOB - 13513c94-cecb-4209-be59-502546aaf264 - orders - Creating asset one with data:    order_id       drink         size  price
+0         1       Latte  Extra Small   4.50
+1         2    Espresso        Small   3.00
+2         3  Cappuccino       Medium   4.00
+3         4   Americano        Large   3.50
+4         5       Mocha  Extra Large   4.75
+[32m2024-12-09 20:10:25 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 13513c94-cecb-4209-be59-502546aaf264 - 22816 - orders - STEP_OUTPUT - Yielded output "result" of type "Nothing". (Type check passed).
+[32m2024-12-09 20:10:25 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 13513c94-cecb-4209-be59-502546aaf264 - 22816 - orders - ASSET_MATERIALIZATION - Materialized value orders.
+[32m2024-12-09 20:10:25 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 13513c94-cecb-4209-be59-502546aaf264 - 22816 - orders - STEP_SUCCESS - Finished execution of step "orders" in 59ms.
