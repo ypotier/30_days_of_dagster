@@ -1,0 +1,24 @@
+[32m2024-12-12 14:50:05 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 97494b47-9306-42ce-aa1b-2cb73744c2f9 - 40775 - LOGS_CAPTURED - Started capturing logs in process (pid: 40775).
+[32m2024-12-12 14:50:05 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 97494b47-9306-42ce-aa1b-2cb73744c2f9 - 40775 - orders_orders_increasing_or_equal - STEP_START - Started execution of step "orders_orders_increasing_or_equal".
+[32m2024-12-12 14:50:05 -0500[0m - dagster - [34mERROR[0m - [31m__ASSET_JOB - 97494b47-9306-42ce-aa1b-2cb73744c2f9 - 40775 - orders_orders_increasing_or_equal - STEP_FAILURE - Execution of step "orders_orders_increasing_or_equal" failed.
+
+dagster._core.errors.DagsterExecutionStepExecutionError: Error occurred while executing op "orders_orders_increasing_or_equal"::
+
+IndexError: list index out of range
+
+Stack Trace:
+  File "/Users/christian/code/30_days_of_dagster/.venv/lib/python3.12/site-packages/dagster/_core/execution/plan/utils.py", line 54, in op_execution_error_boundary
+    yield
+  File "/Users/christian/code/30_days_of_dagster/.venv/lib/python3.12/site-packages/dagster/_utils/__init__.py", line 482, in iterate_with_context
+    next_output = next(iterator)
+                  ^^^^^^^^^^^^^^
+  File "/Users/christian/code/30_days_of_dagster/.venv/lib/python3.12/site-packages/dagster/_core/execution/plan/compute_generator.py", line 140, in _coerce_op_compute_fn_to_iterator
+    result = invoke_compute_fn(
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/christian/code/30_days_of_dagster/.venv/lib/python3.12/site-packages/dagster/_core/execution/plan/compute_generator.py", line 128, in invoke_compute_fn
+    return fn(context, **args_to_pass) if context_arg_provided else fn(**args_to_pass)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/christian/code/30_days_of_dagster/30_days_dagster/30_days_dagster/12_day.py", line 88, in orders_increasing_or_equal
+    previous_row_count = row_count_values[1]
+                         ~~~~~~~~~~~~~~~~^^^
+[0m

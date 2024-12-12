@@ -1,0 +1,5 @@
+[32m2024-12-12 14:51:16 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 9caa602b-95e2-4f5f-a611-66afd30e53f9 - 41396 - LOGS_CAPTURED - Started capturing logs in process (pid: 41396).
+[32m2024-12-12 14:51:16 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 9caa602b-95e2-4f5f-a611-66afd30e53f9 - 41396 - orders_orders_increasing_or_equal - STEP_START - Started execution of step "orders_orders_increasing_or_equal".
+[32m2024-12-12 14:51:16 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 9caa602b-95e2-4f5f-a611-66afd30e53f9 - 41396 - orders_orders_increasing_or_equal - ASSET_CHECK_EVALUATION - DagsterEventType.ASSET_CHECK_EVALUATION for step orders_orders_increasing_or_equal
+[32m2024-12-12 14:51:16 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 9caa602b-95e2-4f5f-a611-66afd30e53f9 - 41396 - orders_orders_increasing_or_equal - STEP_OUTPUT - Yielded output "result" of type "Any". (Type check passed).
+[32m2024-12-12 14:51:16 -0500[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 9caa602b-95e2-4f5f-a611-66afd30e53f9 - 41396 - orders_orders_increasing_or_equal - STEP_SUCCESS - Finished execution of step "orders_orders_increasing_or_equal" in 37ms.
