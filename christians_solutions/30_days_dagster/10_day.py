@@ -5,7 +5,10 @@ import pandas as pd
 import os
 from dagster_pandas.data_frame import create_table_schema_metadata_from_dataframe
 
-# define a resource that can read and write data
+# parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# data_dir = os.path.join(parent_dir, 'data')
+
+
 class CsvStorageResource(dg.ConfigurableResource):
     base_dir: str = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -17,7 +20,13 @@ class CsvStorageResource(dg.ConfigurableResource):
     
     def write_data(self, df, csv_file):
         return df.to_csv(os.path.join(self.base_dir, csv_file), index=False )
+    
+    def return_path(self):
+        return self.base_dir
 
+
+class myPathConfig(dg.Config):
+    file_path: str
 
 # define an asset that represents an external CSV file
 csv_external_asset = dg.AssetSpec(
@@ -46,33 +55,41 @@ def orders(context: dg.AssetExecutionContext, csv_storage: CsvStorageResource) -
         }
     )
 
-@dg.asset(
-        deps=["orders_summary"],
-         automation_condition=dg.AutomationCondition.on_cron("*/10 * * * *")
-)
-def asset_three(context: dg.AssetExecutionContext) -> None:
-    context.log.info("Creating asset three")
 
-# define the resources to use different folders for different "environments"
-resource_defs = {
-        "DEV":{"csv_storage": CsvStorageResource(base_dir="/Users/christian/code/30_days_of_dagster/data_dev")},
-        "PROD": {"csv_storage": CsvStorageResource(base_dir="/Users/christian/code/30_days_of_dagster/data_prod")}
-    }
 
-def get_env():
-    # defined in .env file, which dagster dev automatically loads
-    if os.getenv("DAGSTER_PROD_DEPLOY", "") == "1":
-        return "PROD"
-    elif os.getenv("DAGSTER_IS_DEV_CLI"):
-        return "DEV"
+# sensor to poll the external csv for changes and register a materialization event it changes
+@dg.sensor(minimum_interval_seconds=30)
+def csv_external_asset_sensor(
+    context: dg.SensorEvaluationContext,
+    csv_storage: CsvStorageResource,
+) -> dg.SensorResult:
+    # Poll the external system every 30 seconds
+    # for the last time the file was modified
+    file_last_modified_at_ms = os.path.getmtime(os.path.join(csv_storage.return_path, "orders_raw.csv") ) * 1000
+
+    # Use the cursor to store the last time the sensor updated the asset
+    if context.cursor is not None:
+        external_asset_last_updated_at_ms = float(context.cursor)
     else:
-        return "UNDEFINED"
+        external_asset_last_updated_at_ms = 0
 
-defs = dg.Definitions(
-    assets= [orders, csv_external_asset],
-    # get the resource for the environment defined
-    resources=resource_defs[get_env()]
-)
+    if file_last_modified_at_ms > external_asset_last_updated_at_ms:
+        # The external asset has been modified since it was last updated,
+        # so record a materialization and update the cursor.
+        return dg.SensorResult(
+            asset_events=[
+                dg.AssetMaterialization(
+                    asset_key=csv_external_asset.key,
+                    # You can optionally attach metadata
+                    metadata={"file_last_modified_at_ms": file_last_modified_at_ms},
+                )
+            ],
+            cursor=str(file_last_modified_at_ms),
+        )
+    else:
+        # Nothing has happened since the last check
+        return dg.SensorResult()
+
 
 
 @dg.asset(
@@ -102,3 +119,31 @@ def orders_summary(
     )
 
 
+@dg.asset(
+        deps=["orders_summary"],
+         automation_condition=dg.AutomationCondition.on_cron("*/10 * * * *")
+)
+def asset_three(context: dg.AssetExecutionContext) -> None:
+    context.log.info("Creating asset three")
+
+# define the resources to use different folders for different "environments"
+resource_defs = {
+        "DEV":{"csv_storage": CsvStorageResource(base_dir="/Users/christian/code/30_days_of_dagster/data_dev")},
+        "PROD": {"csv_storage": CsvStorageResource(base_dir="/Users/christian/code/30_days_of_dagster/data_prod")}
+    }
+
+def get_env():
+    # defined in .env file, which dagster dev automatically loads
+    if os.getenv("DAGSTER_PROD_DEPLOY", "") == "1":
+        return "PROD"
+    elif os.getenv("DAGSTER_IS_DEV_CLI"):
+        return "DEV"
+    else:
+        return "UNDEFINED"
+
+defs = dg.Definitions(
+    assets= [orders, orders_summary, asset_three, csv_external_asset],
+    sensors=[csv_external_asset_sensor],
+    # get the resource for the environment defined
+    resources=resource_defs[get_env()]
+)

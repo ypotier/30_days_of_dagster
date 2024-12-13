@@ -9,7 +9,6 @@ import dagster as dg
 import pandas as pd
 from dagster_pandas.data_frame import create_table_schema_metadata_from_dataframe
 
-
 class CsvStorageResource(dg.ConfigurableResource):
     base_dir: str = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -24,7 +23,6 @@ class CsvStorageResource(dg.ConfigurableResource):
     
     def return_path(self):
         return self.base_dir
-
 
 # define an asset that represents an external CSV file
 csv_external_asset = dg.AssetSpec(
@@ -48,26 +46,37 @@ def orders(
     data_files_path = csv_storage.return_path()
     context.log.info(f"Running subprocess to load data from {data_files_path}")
     cmd = [shutil.which("python"), dg.file_relative_path(__file__, "12_day_orders.py")]
+
     result = pipes_subprocess_client.run(
         command=cmd,
         context=context,
         # pass meatadata to the python script
         extras={"data_files_path": data_files_path}
     )
-    # get metadata from the python process; typically
-    metadata = result.get_materialize_result(implicit_materialization=False)
-    context.log.info(f"Subprocess asset metadata: {metadata}")
-    
-    orders_head_dict = json.loads(metadata.metadata.get("orders_df_head").value)
-    orders_head = pd.DataFrame(orders_head_dict)
-    
+    result_message = result.get_custom_messages()[0]
+    orders_head_df = pd.DataFrame(json.loads(result_message.get("orders_df_head")))
+
     return dg.MaterializeResult(
             metadata={
-                "dagster/row_count": dg.MetadataValue.int(metadata.metadata.get("dagster/row_count").value), 
-                "preview": dg.MetadataValue.md(metadata.metadata.get("preview").value),
-                "dagster/column_schema": create_table_schema_metadata_from_dataframe(orders_head)
+                "dagster/row_count": dg.MetadataValue.int(result_message.get("dagster/row_count")), 
+                "preview": dg.MetadataValue.md(result_message.get("preview")),
+                "dagster/column_schema": create_table_schema_metadata_from_dataframe(orders_head_df)
             }
         )
+    # get metadata from the python process; typically
+    # metadata = result.get_materialize_result(implicit_materialization=False)
+    # context.log.info(f"Subprocess asset metadata: {metadata}")
+    
+    # orders_head_dict = json.loads(metadata.metadata.get("orders_df_head").value)
+    # orders_head = pd.DataFrame(orders_head_dict)
+    
+    # return dg.MaterializeResult(
+    #         metadata={
+    #             "dagster/row_count": dg.MetadataValue.int(metadata.metadata.get("dagster/row_count").value), 
+    #             "preview": dg.MetadataValue.md(metadata.metadata.get("preview").value),
+    #             #"dagster/column_schema": create_table_schema_metadata_from_dataframe(orders_head)
+    #         }
+    #     )
 
 
 @dg.asset_check(asset="orders")
