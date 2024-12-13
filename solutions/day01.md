@@ -1,6 +1,6 @@
-# Day 1 Solution 
+# Day 1 Solution
 
-https://youtu.be/RP6B1wXug_0 
+https://youtu.be/RP6B1wXug_0
 
 First install the necessary packages:
 
@@ -11,7 +11,7 @@ pip install dagster dagster-webserver
 Create a Python file called `definitions.py` with the code:
 
 ```python
-import dagster as dg 
+import dagster as dg
 
 @dg.asset
 def a():
