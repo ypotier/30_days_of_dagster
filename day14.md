@@ -1,5 +1,7 @@
 # Day 14
 
-Let's set aside the code we've developed so far to explore conditional data pipelines.
+Yesterday we saw how backfills can enable certain types of parallelism, but parallel computing is actually a much more common part of orchestration.
 
-Create a pipeline with 3 assets, asset A, asset B, and asset C. Asset A should return a number greater than 10 70% of the time. The other 30% of the time, it should return a number less than 10. If A is great than 10, asset B should execute. If A is less than 10, asset C should execute.
+Create a data pipeline that contains 5-10 assets that all share one common parent. *Pro Challenge*: can you write an asset factory that creates these more dynamically?
+
+How does the orchestrator run these independent steps? What controls do you have over the parallelism of independent steps?
