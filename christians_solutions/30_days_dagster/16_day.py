@@ -21,23 +21,10 @@ class CsvStorageResource(dg.ConfigurableResource):
     def return_path(self):
         return self.base_dir
 
-def orders(context: dg.AssetExecutionContext, csv_storage: CsvStorageResource) -> None:
-    orders = csv_storage.read_data('orders_raw.csv')
-    context.log.info(f"Creating asset one with data: {orders.head()}")
-    # directly write csv to storage
-    csv_storage.write_data(orders, 'orders.csv')
-    return dg.MaterializeResult(
-        metadata={
-            "dagster/row_count": dg.MetadataValue.int(len(orders)), 
-            "preview": dg.MetadataValue.md(orders.head().to_markdown()),
-            "dagster/column_schema": create_table_schema_metadata_from_dataframe(orders)
-        }
-    )
-
-
 @dg.multi_asset(
         retry_policy=dg.RetryPolicy(max_retries=2),
         specs=[
+    # define asset-level metadat here
     dg.AssetSpec(
         "orders",
         description="The raw orders data",
