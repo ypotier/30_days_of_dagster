@@ -47,9 +47,7 @@ def orders_summary(context: dg.OpExecutionContext, orders: pd.DataFrame) -> pd.D
 @dg.graph_asset(
         automation_condition=dg.AutomationCondition.on_cron("* * * * *"))
 def orders() -> pd.DataFrame:
-    orders = orders_summary(transform_orders(ingest_orders_csv()))
-    unrelated_op()
-    return orders
+    return orders_summary(transform_orders(ingest_orders_csv()))
 
 
 
