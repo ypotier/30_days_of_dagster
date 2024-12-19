@@ -1,4 +1,7 @@
-from dagster import asset, Definitions
+from dagster import asset, Definitions, RunConfig
+
+from dagster_dbt import build_schedule_from_dbt_selection 
+
 
 # https://youtu.be/azfCDBKTIoQ
 
