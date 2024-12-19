@@ -24,7 +24,7 @@ class CsvStorageResource(dg.ConfigurableResource):
 @dg.multi_asset(
         retry_policy=dg.RetryPolicy(max_retries=2),
         specs=[
-    # define asset-level metadat here
+    # define asset-level metadata here
     dg.AssetSpec(
         "orders",
         description="The raw orders data",
@@ -37,12 +37,14 @@ class CsvStorageResource(dg.ConfigurableResource):
         "orders_medium",
         description="Medium Sized Orders",
         owners=["somebody_else@dagsterlabs.com"],
+        deps=["orders"],
         tags={"category": "transformation", "priority": "medium"},
         kinds=["pandas","dataframe"],
         automation_condition=dg.AutomationCondition.eager()),
     dg.AssetSpec("orders_summary",
         description="Summarized Order Data",
         owners=["another_person@dagsterlabs.com"],
+        deps=["orders"],
         tags={"category": "transformation", "priority": "medium"},
         kinds=["pandas","dataframe"],
         automation_condition=dg.AutomationCondition.eager()),
@@ -51,6 +53,7 @@ def orders_assets(context: dg.AssetExecutionContext, csv_storage_resource: CsvSt
     # operations needed to create and log the materialization of the orders asset
     orders = csv_storage_resource.read_data('orders_raw.csv')
     csv_storage_resource.write_data(orders, 'orders.csv')
+    # yield a MaterializeResult for each asset
     yield dg.MaterializeResult(
         asset_key="orders",
         metadata={
@@ -86,8 +89,6 @@ def orders_assets(context: dg.AssetExecutionContext, csv_storage_resource: CsvSt
             "dagster/column_schema": create_table_schema_metadata_from_dataframe(orders_summary)
         }
     )
-
-
 
 defs = dg.Definitions(
     assets= [orders_assets],
