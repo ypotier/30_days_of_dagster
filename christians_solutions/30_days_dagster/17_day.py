@@ -4,9 +4,7 @@
 # - If asset A >10, run asset B. If asset A <= 10, run asset C.
 
 import dagster as dg
-import pandas as pd
 import numpy as np
-import os
 
 @dg.multi_asset(
         retry_policy=dg.RetryPolicy(max_retries=2),
@@ -40,7 +38,7 @@ import os
         # set to skippable
         skippable=True),
     ])
-def orders_assets(context: dg.AssetExecutionContext, csv_storage_resource: CsvStorageResource):
+def orders_assets(context: dg.AssetExecutionContext):
     # asset_a returns a value of 10 30% of the time
     asset_a = 10 if np.random.rand() < 0.3 else 11
     # yield a MaterializeResult for each asset
