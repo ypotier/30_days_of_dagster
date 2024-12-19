@@ -26,11 +26,11 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [tool.dagster]
-module_name = "hooli_data_eng.definitions"
-code_location_name = "hooli_data_eng"
+module_name = "30_days_dagster.definitions"
+code_location_name = "30_days_dagster"
 
 [tool.setuptools]
-packages = { find = { exclude = ["hooli_data_eng_tests"] } }
+packages = { find = { exclude = ["30_days_dagster_tests"] } }
 
 [tool.setuptools.package-data]
-"hooli_data_eng" = ["dbt_project/*"]
+"30_days_dagster" = ["dbt_project/*"]
