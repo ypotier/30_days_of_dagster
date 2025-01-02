@@ -19,15 +19,22 @@ def step_c(b_output: str) -> str:
     return f"Step C processed: {b_output}"
 
 
+"""A minutely schedule that triggers the execution of step_a, step_b, and step_c.
+
+This schedule runs every minute and initiates the execution of three assets:
+step_a, step_b, and step_c.
+"""
+
+
 @schedule(
     cron_schedule="* * * * *",
     target=AssetSelection.assets("step_a", "step_b", "step_c")
 )
-def my_minutely_schedule():
+def my_minute_schedule():
     return RunRequest()
 
 
 defs = Definitions(
     assets=[step_a, step_b, step_c],
-    schedules=[my_minutely_schedule]
+    schedules=[my_minute_schedule]
 )
