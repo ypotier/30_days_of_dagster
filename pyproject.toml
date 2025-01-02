@@ -1,0 +1,36 @@
+[project]
+name = "30_days_dagster"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.9,<3.13"
+dependencies = [
+      "dagster",
+      "dagster-cloud",
+      "apache-airflow",
+]
+
+[project.optional-dependencies]
+dev = [
+    "dagster-webserver", 
+    "pytest",
+]
+
+sling = ["dagster-embedded-elt"]
+
+powerbi = ["dagster-powerbi"]
+
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.dagster]
+module_name = "30_days_dagster.definitions"
+code_location_name = "30_days_dagster"
+
+[tool.setuptools]
+packages = { find = { exclude = ["30_days_dagster_tests"] } }
+
+[tool.setuptools.package-data]
+"30_days_dagster" = ["dbt_project/*"]
